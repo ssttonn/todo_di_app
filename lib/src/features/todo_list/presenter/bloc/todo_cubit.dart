@@ -31,10 +31,14 @@ class TodoCubit extends Cubit<TodoState> {
   }
 
   void favoriteTodo(int todoId) {
+    /// Get all todos from current state
     List<TodoModel> _allTodos = List.from(state.allTodos);
+
+    /// Find the [TodoModel] with cosresponding todoId
     TodoModel? _favoritedTodoModel =
         _allTodos.firstWhereOrNull((todo) => todo.id == todoId);
     if (_favoritedTodoModel == null) {
+      /// Return an error if todo not found
       emit(state.copyWith(
           errorMessage: "Unable to find todo item with id: $todoId"));
       return;
@@ -42,15 +46,17 @@ class TodoCubit extends Cubit<TodoState> {
     _favoriteTodoUsecase(FavoriteTodoUsecaseParams(todoId: todoId))
         .then((either) {
       if (either.isRight()) {
+        /// if the progress is success, update new favorite state
         _favoritedTodoModel.isFavorite = !_favoritedTodoModel.isFavorite;
         emit(state.copyWith(allTodos: _allTodos));
       }
     });
   }
 
-  void addNewTodo(String title) {
+  Future<bool> addNewTodo(String title) {
     emit(state.copyWith(isAddingNewTodo: true));
-    _addNewTodoUsecase(AddNewTodoUsecaseParams(title: title)).then((either) {
+    return _addNewTodoUsecase(AddNewTodoUsecaseParams(title: title))
+        .then((either) {
       either.fold((failure) {
         emit(state.copyWith(
             errorMessage: failure.message, isAddingNewTodo: false));
@@ -60,6 +66,7 @@ class TodoCubit extends Cubit<TodoState> {
         emit(state.copyWith(
             allTodos: _allTodos, isAddingNewTodo: false, forceRerender: true));
       });
+      return either.isRight();
     });
   }
 }

@@ -18,28 +18,27 @@ class _TodoCreatePageState extends State<TodoCreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TodoCubit, TodoState>(
-      listenWhen: (previous, current) {
-        return previous.isAddingNewTodo != current.isAddingNewTodo;
-      },
-      listener: (BuildContext context, state) {
-        if (!state.isAddingNewTodo) {
-          Navigator.of(context).pop();
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("New Todo"),
-          centerTitle: true,
-          leading: CupertinoButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              padding: EdgeInsets.zero,
-              child: Icon(Icons.arrow_back_ios, color: Colors.white)),
-        ),
-        body: _body(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("New Todo"),
+        centerTitle: true,
+        leading: CupertinoButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            padding: EdgeInsets.zero,
+            child: Icon(Icons.arrow_back_ios, color: Colors.white)),
       ),
+      body: BlocListener<TodoCubit, TodoState>(
+          listener: (context, state) {
+            if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  duration: Duration(seconds: 1),
+                  backgroundColor: Colors.redAccent,
+                  content: Text(state.errorMessage!)));
+            }
+          },
+          child: _body()),
     );
   }
 
@@ -65,8 +64,16 @@ class _TodoCreatePageState extends State<TodoCreatePage> {
           ElevatedButton(
               onPressed: () {
                 if (!_key.currentState!.validate()) return;
+                FocusManager.instance.primaryFocus?.unfocus();
                 BlocProvider.of<TodoCubit>(context)
-                    .addNewTodo(_textEditingController.text);
+                    .addNewTodo(_textEditingController.text)
+                    .then((result) {
+                  if (result) {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    }
+                  }
+                });
               },
               child: Text("Save"))
         ],

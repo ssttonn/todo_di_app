@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/src/base/routes.dart';
-import 'package:todo_app/src/features/todo_list/data/models/todo_model.dart';
 import 'package:todo_app/src/features/todo_list/presenter/bloc/todo_cubit.dart';
 import 'package:todo_app/src/features/todo_list/presenter/bloc/todo_state.dart';
 import 'package:todo_app/src/features/todo_list/presenter/ui/pages/todo_main_page.dart';
-import 'package:todo_app/src/features/todo_list/presenter/ui/widgets/todo_item_widget.dart';
+import 'package:todo_app/src/features/todo_list/presenter/ui/widgets/todo_list_widget.dart';
 
 class AllTodosView extends TodoBaseView {
   @override
@@ -44,17 +43,12 @@ class __AllTodosBodyState extends State<_AllTodosBody> {
     return BlocBuilder<TodoCubit, TodoState>(buildWhen: (previous, current) {
       return current.forceRerender;
     }, builder: (context, state) {
-      return ListView.builder(
-          itemCount: state.allTodos.length,
-          itemBuilder: (context, index) {
-            TodoModel _todoModel = state.allTodos[index];
-            return TodoItemWidget(
-              _todoModel,
-              onFavorite: () {
-                BlocProvider.of<TodoCubit>(context).favoriteTodo(_todoModel.id);
-              },
-            );
-          });
+      if (state.isFetchingTodos) {
+        return CircularProgressIndicator();
+      }
+      return TodoListWidget(state.allTodos, onFavoriteItem: (todoModel) {
+        BlocProvider.of<TodoCubit>(context).favoriteTodo(todoModel.id);
+      });
     });
   }
 }

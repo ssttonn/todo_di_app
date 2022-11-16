@@ -29,7 +29,9 @@ class _TodoMainPageState extends State<TodoMainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: selectedView.buildAppBar(context),
-      body: selectedView.buildBody(context),
+      body: IndexedStack(
+          children: [..._views.map((view) => view.buildBody(context))],
+          index: selectedTab),
       floatingActionButton: selectedView.buildFloatingButtonAction(context),
       bottomNavigationBar: BottomNavigationBar(
           onTap: ((index) {
