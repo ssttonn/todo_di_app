@@ -3,7 +3,6 @@ import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:todo_app/src/features/todo_list/data/entities/todo_entity.dart';
 import 'package:todo_app/src/features/todo_list/data/models/todo_model.dart';
-import 'package:todo_app/src/features/todo_list/data/repositories/todo_base_repository.dart';
 import 'package:todo_app/src/helpers/failure.dart';
 
 import '../datasources/todo_local_datasource.dart';

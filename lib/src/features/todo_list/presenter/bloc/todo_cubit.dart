@@ -56,7 +56,7 @@ class TodoCubit extends Cubit<TodoState> {
             errorMessage: failure.message, isAddingNewTodo: false));
       }, (newTodo) {
         List<TodoModel> _allTodos = List.from(state.allTodos);
-        _allTodos.add(newTodo);
+        _allTodos.insert(0, newTodo);
         emit(state.copyWith(
             allTodos: _allTodos, isAddingNewTodo: false, forceRerender: true));
       });

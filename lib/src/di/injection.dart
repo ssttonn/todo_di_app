@@ -3,4 +3,4 @@ import '../../main.dart';
 import 'injection.config.dart';
 
 @InjectableInit()
-Future<void> configureDependencies() async => await $initGetIt(getIt);
+configureDependencies() => $initGetIt(getIt);

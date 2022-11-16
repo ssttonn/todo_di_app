@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/main.dart';
 import 'package:todo_app/src/features/todo_list/presenter/bloc/todo_cubit.dart';
 import 'package:todo_app/src/features/todo_list/presenter/ui/views/all_todos_view.dart';
 import 'package:todo_app/src/features/todo_list/presenter/ui/views/favorite_todos_view.dart';

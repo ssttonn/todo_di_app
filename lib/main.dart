@@ -8,10 +8,10 @@ import 'src/features/todo_list/presenter/bloc/todo_cubit.dart';
 
 final getIt = GetIt.instance;
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    await configureDependencies();
+    configureDependencies();
   } catch (e) {
     print(e);
   } finally {

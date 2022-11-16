@@ -32,6 +32,8 @@ class TodoLocalDataSourceImpl implements TodoLocalDataSource {
   Future<List<TodoHiveEntity>> fetchAllTodos() async {
     return hiveBox.keys
         .map((id) => hiveBox.getAt(id)!.copyWith(id: id))
+        .toList()
+        .reversed
         .toList();
   }
 }
