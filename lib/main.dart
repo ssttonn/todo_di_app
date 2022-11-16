@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:todo_app/src/base/routes.dart';
 import 'package:todo_app/src/di/injection.dart';
-import 'package:todo_app/src/features/todo_list/presenter/ui/pages/todo_main_page.dart';
+
+import 'src/features/todo_list/presenter/bloc/todo_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -21,12 +24,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: TodoMainPage(),
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: FutureBuilder(
+          future: getIt.allReady(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return BlocProvider.value(
+                value: getIt<TodoCubit>(),
+                child: MaterialApp(
+                  title: 'Flutter Demo',
+                  theme: ThemeData(
+                    primarySwatch: Colors.blue,
+                  ),
+                  onGenerateRoute: routeHandler,
+                  initialRoute: "/",
+                ),
+              );
+            } else {
+              return Container(color: Colors.white);
+            }
+          }),
     );
   }
 }

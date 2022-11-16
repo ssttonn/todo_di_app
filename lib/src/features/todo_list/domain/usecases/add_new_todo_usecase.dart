@@ -2,7 +2,7 @@ part of todo_usecases;
 
 @LazySingleton()
 class AddNewTodoUsecase extends UseCase<TodoModel, AddNewTodoUsecaseParams> {
-  final TodoBaseRepository _todoRepository;
+  final TodoRepository _todoRepository;
 
   AddNewTodoUsecase(@injectable this._todoRepository);
 

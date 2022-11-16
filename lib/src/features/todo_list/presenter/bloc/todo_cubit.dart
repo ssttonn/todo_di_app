@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:todo_app/src/features/todo_list/domain/usecases/favorite_todo_usecase.dart';
 import 'package:todo_app/src/features/todo_list/domain/usecases/todo_usecases.dart';
 import 'package:todo_app/src/helpers/usecase.dart';
 import '../../data/models/todo_model.dart';
@@ -31,7 +30,7 @@ class TodoCubit extends Cubit<TodoState> {
     });
   }
 
-  void favoriteTodo(String todoId) {
+  void favoriteTodo(int todoId) {
     List<TodoModel> _allTodos = List.from(state.allTodos);
     TodoModel? _favoritedTodoModel =
         _allTodos.firstWhereOrNull((todo) => todo.id == todoId);
@@ -50,14 +49,16 @@ class TodoCubit extends Cubit<TodoState> {
   }
 
   void addNewTodo(String title) {
+    emit(state.copyWith(isAddingNewTodo: true));
     _addNewTodoUsecase(AddNewTodoUsecaseParams(title: title)).then((either) {
       either.fold((failure) {
         emit(state.copyWith(
             errorMessage: failure.message, isAddingNewTodo: false));
       }, (newTodo) {
         List<TodoModel> _allTodos = List.from(state.allTodos);
-        _allTodos.insert(0, newTodo);
-        emit(state.copyWith(allTodos: _allTodos, isAddingNewTodo: false));
+        _allTodos.add(newTodo);
+        emit(state.copyWith(
+            allTodos: _allTodos, isAddingNewTodo: false, forceRerender: true));
       });
     });
   }

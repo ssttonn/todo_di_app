@@ -1,13 +1,8 @@
-import 'package:injectable/injectable.dart';
-import 'package:todo_app/src/helpers/failure.dart';
-import 'package:dartz/dartz.dart';
-import 'package:todo_app/src/helpers/usecase.dart';
-
-import '../../data/repositories/todo_base_repository.dart';
+part of todo_usecases;
 
 @LazySingleton()
 class FavoriteTodoUsecase extends UseCase<void, FavoriteTodoUsecaseParams> {
-  final TodoBaseRepository _todoRepository;
+  final TodoRepository _todoRepository;
 
   FavoriteTodoUsecase(@injectable this._todoRepository);
   @override
@@ -17,6 +12,6 @@ class FavoriteTodoUsecase extends UseCase<void, FavoriteTodoUsecaseParams> {
 }
 
 class FavoriteTodoUsecaseParams {
-  final String todoId;
+  final int todoId;
   FavoriteTodoUsecaseParams({required this.todoId});
 }

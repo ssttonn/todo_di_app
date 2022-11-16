@@ -13,6 +13,7 @@ class FavoriteTodosView extends TodoBaseView {
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
       title: Text("Favorite"),
+      centerTitle: true,
     );
   }
 
@@ -32,14 +33,14 @@ class _FavoriteTodosBody extends StatefulWidget {
 class __FavoriteTodosBodyState extends State<_FavoriteTodosBody> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TodoCubit, TodoState>(buildWhen: (previous, current) {
-      return previous.favoriteTodos.length != current.favoriteTodos.length;
-    }, builder: (context, state) {
+    return BlocBuilder<TodoCubit, TodoState>(builder: (context, state) {
       return ListView.builder(
-          itemCount: state.allTodos.length,
+          itemCount: state.favoriteTodos.length,
           itemBuilder: (context, index) {
-            TodoModel _todoModel = state.allTodos[index];
-            return TodoItemWidget(_todoModel);
+            TodoModel _todoModel = state.favoriteTodos[index];
+            return TodoItemWidget(_todoModel, onFavorite: () {
+              BlocProvider.of<TodoCubit>(context).favoriteTodo(_todoModel.id);
+            });
           });
     });
   }

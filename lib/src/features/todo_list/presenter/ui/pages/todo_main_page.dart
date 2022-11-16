@@ -19,37 +19,32 @@ class _TodoMainPageState extends State<TodoMainPage> {
   TodoBaseView get selectedView => _views[selectedTab];
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      BlocProvider.of<TodoCubit>(context)..fetchAllTodos();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: getIt.allReady(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return BlocProvider.value(
-              value: getIt<TodoCubit>(),
-              child: Scaffold(
-                appBar: selectedView.buildAppBar(context),
-                body: selectedView.buildBody(context),
-                floatingActionButton:
-                    selectedView.buildFloatingButtonAction(context),
-                bottomNavigationBar: BottomNavigationBar(
-                    onTap: ((index) {
-                      setState(() {
-                        selectedTab = index;
-                      });
-                    }),
-                    currentIndex: selectedTab,
-                    items: [
-                      BottomNavigationBarItem(
-                          icon: Icon(Icons.home), label: "Home"),
-                      BottomNavigationBarItem(
-                          icon: Icon(Icons.favorite), label: "Favorite"),
-                    ]),
-              ),
-            );
-          } else {
-            return Container(color: Colors.white);
-          }
-        });
+    return Scaffold(
+      appBar: selectedView.buildAppBar(context),
+      body: selectedView.buildBody(context),
+      floatingActionButton: selectedView.buildFloatingButtonAction(context),
+      bottomNavigationBar: BottomNavigationBar(
+          onTap: ((index) {
+            setState(() {
+              selectedTab = index;
+            });
+          }),
+          currentIndex: selectedTab,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.favorite), label: "Favorite"),
+          ]),
+    );
   }
 }
 
