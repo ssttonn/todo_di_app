@@ -1,12 +1,13 @@
 part of todo_usecases;
 
-@LazySingleton()
-class FavoriteTodoUsecase extends UseCase<void, FavoriteTodoUsecaseParams> {
-  final TodoRepository _todoRepository;
+@injectable
+class FavoriteTodoUsecase
+    extends UseCase<TodoModel, FavoriteTodoUsecaseParams> {
+  final TodoRepository<TodoModel> _todoRepository;
 
   FavoriteTodoUsecase(@injectable this._todoRepository);
   @override
-  Future<Either<Failure, void>> call(FavoriteTodoUsecaseParams params) {
+  Future<TodoModel> call(FavoriteTodoUsecaseParams params) {
     return _todoRepository.favoriteTodo(params.todoId);
   }
 }

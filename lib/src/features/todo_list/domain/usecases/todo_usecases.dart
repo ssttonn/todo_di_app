@@ -1,9 +1,7 @@
 library todo_usecases;
 
-import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../helpers/failure.dart';
 import '../../../../helpers/usecase.dart';
 import '../../data/models/todo_model.dart';
 import '../../data/repositories/todo_repository.dart';
