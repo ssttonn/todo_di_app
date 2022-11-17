@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/src/features/todo_list/presenter/bloc/todo_cubit.dart';
 import 'package:todo_app/src/features/todo_list/presenter/ui/views/all_todos_view.dart';
 import 'package:todo_app/src/features/todo_list/presenter/ui/views/favorite_todos_view.dart';
+
+import '../../blocs/todo_list/todo_list_bloc.dart';
+import '../../blocs/todo_list/todo_list_event.dart';
 
 class TodoMainPage extends StatefulWidget {
   const TodoMainPage({Key? key}) : super(key: key);
@@ -21,7 +23,9 @@ class _TodoMainPageState extends State<TodoMainPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      BlocProvider.of<TodoCubit>(context)..fetchAllTodos();
+      BlocProvider.of<TodoListBloc>(context)
+        ..add(FetchAllTodos())
+        ..add(ListenToAllTodosChanged());
     });
   }
 

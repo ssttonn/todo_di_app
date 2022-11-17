@@ -1,56 +1,43 @@
-import 'package:dartz/dartz.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:todo_app/src/features/todo_list/data/entities/todo_entity.dart';
 import 'package:todo_app/src/features/todo_list/data/models/todo_model.dart';
-import 'package:todo_app/src/helpers/failure.dart';
+import 'package:todo_app/src/helpers/base_model.dart';
 
 import '../datasources/todo_local_datasource.dart';
 
-abstract class TodoRepository {
-  Future<Either<Failure, List<TodoModel>>> fetchAllTodos();
-  Future<Either<Failure, TodoModel>> addNewTodo(String title);
-  Future<Either<Failure, void>> favoriteTodo(int todoId);
+abstract class TodoRepository<T extends BaseModel> {
+  Future<List<T>> fetchAllTodos();
+  Future<void> addNewTodo(String title);
+  Future<void> favoriteTodo(int todoId);
+  Future<Stream<TodoModel>> todoChanged();
 }
 
 @LazySingleton(as: TodoRepository)
-class TodoRepositoryImpl implements TodoRepository {
-  final TodoLocalDataSource _dataSource;
-  TodoRepositoryImpl(@injectable this._dataSource);
+class TodoRepositoryImpl implements TodoRepository<TodoModel> {
+  final TodoLocalDataSource<TodoHiveEntity> _dataSource;
+  final Box<TodoHiveEntity> hiveBox;
+  TodoRepositoryImpl(@injectable this._dataSource, @injectable this.hiveBox);
 
   @override
-  Future<Either<Failure, TodoModel>> addNewTodo(String title) async {
-    try {
-      TodoHiveEntity _newEntity = await _dataSource.addNewTodo(title);
-      return Right(_newEntity.toModel());
-    } on HiveError catch (e) {
-      return Left(CacheFailure(e.message.toString()));
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
-    }
+  Future<void> addNewTodo(String title) async {
+    return _dataSource.addNewTodo(title);
   }
 
   @override
-  Future<Either<Failure, void>> favoriteTodo(int todoId) async {
-    try {
-      return Right(await _dataSource.favoriteTodo(todoId));
-    } on HiveError catch (e) {
-      return Left(CacheFailure(e.message.toString()));
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
-    }
+  Future<void> favoriteTodo(int todoId) {
+    return _dataSource.favoriteTodo(todoId);
   }
 
   @override
-  Future<Either<Failure, List<TodoModel>>> fetchAllTodos() async {
-    try {
-      return Right((await _dataSource.fetchAllTodos())
-          .map((entity) => entity.toModel())
-          .toList());
-    } on HiveError catch (e) {
-      return Left(CacheFailure(e.message.toString()));
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
-    }
+  Future<List<TodoModel>> fetchAllTodos() async {
+    List<TodoHiveEntity> allTodoEntities = await _dataSource.fetchAllTodos();
+    return allTodoEntities.map((entity) => entity.toModel()).toList();
+  }
+
+  @override
+  Future<Stream<TodoModel>> todoChanged() async {
+    return hiveBox.watch().map((event) =>
+        (event.value as TodoHiveEntity).copyWith(id: event.key).toModel());
   }
 }

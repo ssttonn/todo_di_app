@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/src/features/todo_list/presenter/bloc/todo_cubit.dart';
-import 'package:todo_app/src/features/todo_list/presenter/bloc/todo_state.dart';
 import 'package:todo_app/src/shared/widgets/spacing_column.dart';
+
+import '../../blocs/todo_list/todo_list_bloc.dart';
+import '../../blocs/todo_list/todo_list_event.dart';
+import '../../blocs/todo_list/todo_list_state.dart';
 
 class TodoCreatePage extends StatefulWidget {
   const TodoCreatePage({Key? key}) : super(key: key);
@@ -29,13 +31,19 @@ class _TodoCreatePageState extends State<TodoCreatePage> {
             padding: EdgeInsets.zero,
             child: Icon(Icons.arrow_back_ios, color: Colors.white)),
       ),
-      body: BlocListener<TodoCubit, TodoState>(
+      body: BlocListener<TodoListBloc, TodoListState>(
+          listenWhen: ((previousState, currentState) {
+            return currentState is TodoListFailure ||
+                currentState is NewTodoAdded;
+          }),
           listener: (context, state) {
-            if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
+            if (state is TodoListFailure) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   duration: Duration(seconds: 1),
                   backgroundColor: Colors.redAccent,
-                  content: Text(state.errorMessage!)));
+                  content: Text(state.errorMessage)));
+            } else if (state is NewTodoAdded) {
+              Navigator.of(context).pop();
             }
           },
           child: _body()),
@@ -65,15 +73,8 @@ class _TodoCreatePageState extends State<TodoCreatePage> {
               onPressed: () {
                 if (!_key.currentState!.validate()) return;
                 FocusManager.instance.primaryFocus?.unfocus();
-                BlocProvider.of<TodoCubit>(context)
-                    .addNewTodo(_textEditingController.text)
-                    .then((result) {
-                  if (result) {
-                    if (Navigator.of(context).canPop()) {
-                      Navigator.of(context).pop();
-                    }
-                  }
-                });
+                BlocProvider.of<TodoListBloc>(context)
+                    .add(AddNewTodo(newTodoTitle: _textEditingController.text));
               },
               child: Text("Save"))
         ],

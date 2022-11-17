@@ -1,15 +1,16 @@
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:todo_app/src/features/todo_list/data/entities/todo_entity.dart';
+import 'package:todo_app/src/helpers/base_entity.dart';
 
-abstract class TodoLocalDataSource {
-  Future<List<TodoHiveEntity>> fetchAllTodos();
-  Future<TodoHiveEntity> addNewTodo(String title);
+abstract class TodoLocalDataSource<T extends BaseEntity> {
+  Future<List<T>> fetchAllTodos();
+  Future<void> addNewTodo(String title);
   Future<void> favoriteTodo(int todoId);
 }
 
 @LazySingleton(as: TodoLocalDataSource)
-class TodoLocalDataSourceImpl implements TodoLocalDataSource {
+class TodoLocalDataSourceImpl implements TodoLocalDataSource<TodoHiveEntity> {
   final Box<TodoHiveEntity> hiveBox;
   TodoLocalDataSourceImpl({@injectable required this.hiveBox});
 

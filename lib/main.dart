@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:todo_app/src/base/routes.dart';
 import 'package:todo_app/src/di/injection.dart';
-
-import 'src/features/todo_list/presenter/bloc/todo_cubit.dart';
+import 'package:todo_app/src/features/todo_list/presenter/blocs/todo_list/todo_list_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -33,7 +32,7 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return BlocProvider.value(
-                value: getIt<TodoCubit>(),
+                value: getIt<TodoListBloc>(),
                 child: MaterialApp(
                   title: 'Flutter Demo',
                   theme: ThemeData(
