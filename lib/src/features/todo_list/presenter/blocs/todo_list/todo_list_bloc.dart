@@ -55,7 +55,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
                     todo.favoriteAt != null &&
                     DateTime.now().isAfter(todo.favoriteAt!))
                 .toList()
-              ..sort(((a, b) => a.favoriteAt!.isBefore(b.favoriteAt!) ? 1 : 0)),
+              ..sort(((a, b) => -a.favoriteAt!.compareTo(b.favoriteAt!))),
             state: TodoState.todoFavorited));
       } catch (e) {
         emit(state.copyWith(state: TodoState.failure));
