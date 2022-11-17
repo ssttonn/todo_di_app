@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:todo_app/src/features/todo_list/data/models/todo_model.dart';
 import 'package:todo_app/src/features/todo_list/domain/usecases/todo_usecases.dart';
@@ -10,55 +9,50 @@ import 'todo_list_event.dart';
 @Singleton()
 class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   final FetchAllTodosUsecase _fetchAllTodosUsecase;
-  // final AddNewTodoUsecase _addNewTodoUsecase;
-  // final FavoriteTodoUsecase _favoriteTodoUsecase;
-  final ListenTodosChangedUsecase _listenTodosChangedUsecase;
+  final FavoriteTodoUsecase _favoriteTodoUsecase;
+  final AddNewTodoUsecase _addNewTodoUsecase;
+
   TodoListBloc(
       @injectable this._fetchAllTodosUsecase,
-      // @injectable this._addNewTodoUsecase,
-      // @injectable this._favoriteTodoUsecase,
-      @injectable this._listenTodosChangedUsecase)
-      : super(TodoListInitialState()) {
-    on<ListenToAllTodosChanged>((event, emit) async {
-      await emit.forEach<TodoModel>(await _listenTodosChangedUsecase(NoParam()),
-          onData: (todo) {
-        return TodoItemUpdated(todoModel: todo);
-      });
-    });
-
+      @injectable this._favoriteTodoUsecase,
+      @injectable this._addNewTodoUsecase)
+      : super(TodoListState.initial()) {
     on<FetchAllTodos>(((event, emit) async {
       try {
+        emit(state.copyWith(state: TodoState.fetchingTodos));
         final allTodos = await _fetchAllTodosUsecase(NoParam());
-        emit(AllTodosFetched(allTodos: allTodos));
-      } on HiveError catch (e) {
-        emit(TodoListFailure(errorMessage: e.message));
+        emit(state.copyWith(
+            allTodos: allTodos, state: TodoState.fetchTodosSuccess));
       } catch (e) {
-        emit(TodoListFailure(errorMessage: e.toString()));
+        emit(state.copyWith(state: TodoState.failure));
       }
     }));
 
-    // on<AddNewTodo>((event, emit) async {
-    //   try {
-    //     await _addNewTodoUsecase(
-    //         AddNewTodoUsecaseParams(title: event.newTodoTitle));
-    //     emit(NewTodoAdded());
-    //   } on HiveError catch (e) {
-    //     emit(TodoListFailure(errorMessage: e.message));
-    //   } catch (e) {
-    //     emit(TodoListFailure(errorMessage: e.toString()));
-    //   }
-    // });
+    on<AddNewTodo>((event, emit) async {
+      try {
+        emit(state.copyWith(state: TodoState.addingNewTodo));
+        TodoModel _newTodoModel = await _addNewTodoUsecase(
+            AddNewTodoUsecaseParams(title: event.newTodoTitle));
+        emit(state.copyWith(
+            allTodos: state.allTodos..insert(0, _newTodoModel),
+            state: TodoState.newTodoAdded));
+      } catch (e) {
+        emit(state.copyWith(state: TodoState.failure));
+      }
+    });
 
-    // on<FavoriteTodo>((event, emit) async {
-    //   try {
-    //     await _favoriteTodoUsecase(
-    //         FavoriteTodoUsecaseParams(todoId: event.todoId));
-    //     emit(TodoIsFavorited(todoId: event.todoId));
-    //   } on HiveError catch (e) {
-    //     emit(TodoListFailure(errorMessage: e.message));
-    //   } catch (e) {
-    //     emit(TodoListFailure(errorMessage: e.toString()));
-    //   }
-    // });
+    on<FavoriteTodo>((event, emit) async {
+      try {
+        emit(state.copyWith(state: TodoState.todoBeingFavorite));
+        TodoModel _todoModel = await _favoriteTodoUsecase(
+            FavoriteTodoUsecaseParams(todoId: event.todoId));
+        state.allTodos[state.allTodos
+            .indexWhere((todo) => todo.id == _todoModel.id)] = _todoModel;
+        emit(state.copyWith(
+            allTodos: state.allTodos, state: TodoState.todoFavorited));
+      } catch (e) {
+        emit(state.copyWith(state: TodoState.failure));
+      }
+    });
   }
 }

@@ -27,25 +27,17 @@ class MyApp extends StatelessWidget {
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: FutureBuilder(
-          future: getIt.allReady(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return BlocProvider.value(
-                value: getIt<TodoListBloc>(),
-                child: MaterialApp(
-                  title: 'Flutter Demo',
-                  theme: ThemeData(
-                    primarySwatch: Colors.blue,
-                  ),
-                  onGenerateRoute: routeHandler,
-                  initialRoute: "/",
-                ),
-              );
-            } else {
-              return Container(color: Colors.white);
-            }
-          }),
+      child: BlocProvider.value(
+        value: getIt.get<TodoListBloc>(),
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          onGenerateRoute: mainRouteGenerator,
+          initialRoute: "/",
+        ),
+      ),
     );
   }
 }

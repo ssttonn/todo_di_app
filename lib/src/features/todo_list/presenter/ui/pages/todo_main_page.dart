@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/src/features/todo_list/presenter/ui/views/all_todos_view.dart';
-import 'package:todo_app/src/features/todo_list/presenter/ui/views/favorite_todos_view.dart';
+import 'package:todo_app/src/features/todo_list/presenter/ui/pages/create_new_todo_page.dart';
+import 'package:todo_app/src/features/todo_list/presenter/ui/pages/all_todos_page.dart';
+import 'package:todo_app/src/features/todo_list/presenter/ui/pages/favorite_todos_page.dart';
 
 import '../../blocs/todo_list/todo_list_bloc.dart';
 import '../../blocs/todo_list/todo_list_event.dart';
@@ -14,36 +15,31 @@ class TodoMainPage extends StatefulWidget {
 }
 
 class _TodoMainPageState extends State<TodoMainPage> {
-  List<TodoBaseView> _views = [AllTodosView(), FavoriteTodosView()];
-  int selectedTab = 0;
+  List<Widget> _pages = [HomeNavigator(), FavoriteTodosPage()];
+  int _selectedTab = 0;
 
-  TodoBaseView get selectedView => _views[selectedTab];
+  Widget get selectedPage => _pages[_selectedTab];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      BlocProvider.of<TodoListBloc>(context)
-        ..add(FetchAllTodos())
-        ..add(ListenToAllTodosChanged());
+      BlocProvider.of<TodoListBloc>(context).add(FetchAllTodos());
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: selectedView.buildAppBar(context),
       body: IndexedStack(
-          children: [..._views.map((view) => view.buildBody(context))],
-          index: selectedTab),
-      floatingActionButton: selectedView.buildFloatingButtonAction(context),
+          children: [..._pages.map((page) => page)], index: _selectedTab),
       bottomNavigationBar: BottomNavigationBar(
           onTap: ((index) {
             setState(() {
-              selectedTab = index;
+              _selectedTab = index;
             });
           }),
-          currentIndex: selectedTab,
+          currentIndex: _selectedTab,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(
@@ -53,12 +49,30 @@ class _TodoMainPageState extends State<TodoMainPage> {
   }
 }
 
-abstract class TodoBaseView {
-  AppBar buildAppBar(BuildContext context);
+class HomeNavigator extends StatefulWidget {
+  const HomeNavigator({Key? key}) : super(key: key);
 
-  Widget buildBody(BuildContext context);
+  @override
+  State<HomeNavigator> createState() => _HomeNavigatorState();
+}
 
-  FloatingActionButton? buildFloatingButtonAction(BuildContext context) {
-    return null;
+class _HomeNavigatorState extends State<HomeNavigator> {
+  GlobalKey<NavigatorState> _homeNavigatorKey = GlobalKey();
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      key: _homeNavigatorKey,
+      onGenerateRoute: ((settings) {
+        late Widget page;
+        if (settings.name == "/") {
+          page = AllTodosPage();
+        } else if (settings.name == "/create") {
+          page = CreateNewTodoPage();
+        } else {
+          page = Container();
+        }
+        return MaterialPageRoute(builder: (context) => page);
+      }),
+    );
   }
 }

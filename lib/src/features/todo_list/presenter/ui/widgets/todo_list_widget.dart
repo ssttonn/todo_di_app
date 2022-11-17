@@ -4,8 +4,8 @@ import 'package:todo_app/src/features/todo_list/presenter/ui/widgets/todo_item_w
 
 class TodoListWidget extends StatelessWidget {
   final List<TodoModel> _todoList;
-  final Function(TodoModel) onFavoriteItem;
-  const TodoListWidget(this._todoList, {required this.onFavoriteItem});
+  final Widget Function(TodoModel) itemBuilder;
+  const TodoListWidget(this._todoList, {required this.itemBuilder});
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +14,7 @@ class TodoListWidget extends StatelessWidget {
         physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
         itemBuilder: (context, index) {
           TodoModel _todoModel = _todoList[index];
-          return TodoItemWidget(
-            _todoModel,
-            onFavorite: () => onFavoriteItem(_todoModel),
-          );
+          return itemBuilder(_todoModel);
         });
   }
 }

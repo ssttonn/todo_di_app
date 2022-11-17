@@ -9,4 +9,3 @@ import '../../data/repositories/todo_repository.dart';
 part 'add_new_todo_usecase.dart';
 part 'fetch_all_todos_usecase.dart';
 part 'favorite_todo_usecase.dart';
-part 'listen_to_todos_changed_usecase.dart';

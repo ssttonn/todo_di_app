@@ -1,22 +1,33 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/main.dart';
+import 'package:todo_app/src/features/todo_list/presenter/blocs/todo_list/todo_list_bloc.dart';
 import 'package:todo_app/src/shared/widgets/spacing_column.dart';
 
-import '../../blocs/todo_list/todo_list_bloc.dart';
 import '../../blocs/todo_list/todo_list_event.dart';
 import '../../blocs/todo_list/todo_list_state.dart';
 
-class TodoCreatePage extends StatefulWidget {
-  const TodoCreatePage({Key? key}) : super(key: key);
+class CreateNewTodoPage extends StatefulWidget {
+  const CreateNewTodoPage({Key? key}) : super(key: key);
 
   @override
-  State<TodoCreatePage> createState() => _TodoCreatePageState();
+  State<CreateNewTodoPage> createState() => _CreateNewTodoPageState();
 }
 
-class _TodoCreatePageState extends State<TodoCreatePage> {
+class _CreateNewTodoPageState extends State<CreateNewTodoPage> {
   final TextEditingController _textEditingController = TextEditingController();
   GlobalKey<FormState> _key = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,22 +42,23 @@ class _TodoCreatePageState extends State<TodoCreatePage> {
             padding: EdgeInsets.zero,
             child: Icon(Icons.arrow_back_ios, color: Colors.white)),
       ),
-      body: BlocListener<TodoListBloc, TodoListState>(
-          listenWhen: ((previousState, currentState) {
-            return currentState is TodoListFailure ||
-                currentState is NewTodoAdded;
-          }),
-          listener: (context, state) {
-            if (state is TodoListFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  duration: Duration(seconds: 1),
-                  backgroundColor: Colors.redAccent,
-                  content: Text(state.errorMessage)));
-            } else if (state is NewTodoAdded) {
-              Navigator.of(context).pop();
-            }
-          },
-          child: _body()),
+      body: FutureBuilder(
+        future: getIt.allReady(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData)
+            return BlocListener<TodoListBloc, TodoListState>(
+                listenWhen: ((previousState, currentState) {
+                  return currentState.state == TodoState.newTodoAdded;
+                }),
+                listener: (context, state) {
+                  if (state.state == TodoState.newTodoAdded) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: _body());
+          return Container();
+        },
+      ),
     );
   }
 
