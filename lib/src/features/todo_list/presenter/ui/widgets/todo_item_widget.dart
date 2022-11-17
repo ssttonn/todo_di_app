@@ -17,7 +17,7 @@ class TodoItemWidget extends StatelessWidget {
         children: [
           CupertinoButton(
               child: Icon(
-                  _todoModel.isFavorite
+                  _todoModel.favoriteAt != null
                       ? Icons.favorite
                       : Icons.favorite_outline,
                   size: 30),

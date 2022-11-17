@@ -49,7 +49,14 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
         state.allTodos[state.allTodos
             .indexWhere((todo) => todo.id == _todoModel.id)] = _todoModel;
         emit(state.copyWith(
-            allTodos: state.allTodos, state: TodoState.todoFavorited));
+            allTodos: state.allTodos,
+            favoriteTodos: state.allTodos
+                .where((todo) =>
+                    todo.favoriteAt != null &&
+                    DateTime.now().isAfter(todo.favoriteAt!))
+                .toList()
+              ..sort(((a, b) => a.favoriteAt!.isBefore(b.favoriteAt!) ? 1 : 0)),
+            state: TodoState.todoFavorited));
       } catch (e) {
         emit(state.copyWith(state: TodoState.failure));
       }

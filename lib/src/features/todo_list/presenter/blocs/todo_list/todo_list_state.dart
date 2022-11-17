@@ -13,16 +13,26 @@ enum TodoState {
 
 class TodoListState {
   final List<TodoModel> allTodos;
+  final List<TodoModel> favoriteTodos;
   final TodoState state;
 
-  TodoListState({required this.allTodos, required this.state});
+  TodoListState(
+      {required this.allTodos,
+      required this.state,
+      required this.favoriteTodos});
 
   factory TodoListState.initial() {
-    return TodoListState(allTodos: [], state: TodoState.initial);
+    return TodoListState(
+        allTodos: [], favoriteTodos: [], state: TodoState.initial);
   }
 
-  TodoListState copyWith({List<TodoModel>? allTodos, TodoState? state}) {
+  TodoListState copyWith(
+      {List<TodoModel>? allTodos,
+      List<TodoModel>? favoriteTodos,
+      TodoState? state}) {
     return TodoListState(
-        allTodos: allTodos ?? this.allTodos, state: state ?? this.state);
+        allTodos: allTodos ?? this.allTodos,
+        favoriteTodos: favoriteTodos ?? this.favoriteTodos,
+        state: state ?? this.state);
   }
 }

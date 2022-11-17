@@ -30,9 +30,7 @@ class _FavoriteTodosPageState extends State<FavoriteTodosPage> {
           currentState.state == TodoState.fetchTodosSuccess ||
           currentState.state == TodoState.todoFavorited;
     }, builder: (context, state) {
-      return TodoListWidget(
-          state.allTodos.where((todo) => todo.isFavorite).toList(),
-          itemBuilder: ((todoModel) {
+      return TodoListWidget(state.favoriteTodos, itemBuilder: ((todoModel) {
         return TodoItemWidget(
           todoModel,
           onFavorite: () {

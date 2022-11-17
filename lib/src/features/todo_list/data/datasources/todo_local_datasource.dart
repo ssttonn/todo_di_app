@@ -13,8 +13,8 @@ abstract class TodoLocalDataSource<T extends BaseEntity> {
 class TodoMockDataSourceImpl implements TodoLocalDataSource<TodoEntity> {
   @override
   Future<TodoEntity> addNewTodo(String title) {
-    TodoEntity _newTodo = TodoEntity(
-        id: _mockTodoEntities.length, title: title, isFavorite: false);
+    TodoEntity _newTodo =
+        TodoEntity(id: _mockTodoEntities.length, title: title);
     _mockTodoEntities.insert(0, _newTodo);
     return Future.value(_newTodo);
   }
@@ -24,7 +24,11 @@ class TodoMockDataSourceImpl implements TodoLocalDataSource<TodoEntity> {
     TodoEntity? _todoEntity =
         _mockTodoEntities.firstWhereOrNull((element) => element.id == todoId);
     if (_todoEntity == null) throw "Unable to find this todo, please try again";
-    _todoEntity.isFavorite = !_todoEntity.isFavorite;
+    if (_todoEntity.favoriteAt == null)
+      _todoEntity.favoriteAt = DateTime.now();
+    else {
+      _todoEntity.favoriteAt = null;
+    }
     return Future.value(_todoEntity);
   }
 
