@@ -39,10 +39,10 @@ _i1.GetIt $initGetIt(
       () => _i7.FavoriteTodoUsecase(get<_i5.TodoRepository<_i6.TodoModel>>()));
   gh.factory<_i7.FetchAllTodosUsecase>(
       () => _i7.FetchAllTodosUsecase(get<_i5.TodoRepository<_i6.TodoModel>>()));
-  gh.singleton<_i8.TodoListBloc>(_i8.TodoListBloc(
-    get<_i7.FetchAllTodosUsecase>(),
-    get<_i7.FavoriteTodoUsecase>(),
-    get<_i7.AddNewTodoUsecase>(),
-  ));
+  gh.factory<_i8.TodoListBloc>(() => _i8.TodoListBloc(
+        get<_i7.FetchAllTodosUsecase>(),
+        get<_i7.FavoriteTodoUsecase>(),
+        get<_i7.AddNewTodoUsecase>(),
+      ));
   return get;
 }

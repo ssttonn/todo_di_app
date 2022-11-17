@@ -6,7 +6,7 @@ import 'package:todo_app/src/helpers/usecase.dart';
 import 'todo_list_state.dart';
 import 'todo_list_event.dart';
 
-@Singleton()
+@injectable
 class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   final FetchAllTodosUsecase _fetchAllTodosUsecase;
   final FavoriteTodoUsecase _favoriteTodoUsecase;
