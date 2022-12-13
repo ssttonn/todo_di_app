@@ -1,13 +1,13 @@
 part of todo_usecases;
 
 @injectable
-class AddNewTodoUsecase extends UseCase<TodoModel, AddNewTodoUsecaseParams> {
-  final TodoRepository<TodoModel> _todoRepository;
+class AddNewTodoUsecase extends UseCase<Todo, AddNewTodoUsecaseParams> {
+  final TodoRepository _todoRepository;
 
   AddNewTodoUsecase(@injectable this._todoRepository);
 
   @override
-  Future<TodoModel> call(AddNewTodoUsecaseParams params) {
+  Future<Todo> call(AddNewTodoUsecaseParams params) {
     return _todoRepository.addNewTodo(params.title);
   }
 }

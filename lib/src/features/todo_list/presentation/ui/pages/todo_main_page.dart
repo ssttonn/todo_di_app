@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/src/features/todo_list/presenter/ui/pages/create_new_todo_page.dart';
-import 'package:todo_app/src/features/todo_list/presenter/ui/pages/all_todos_page.dart';
-import 'package:todo_app/src/features/todo_list/presenter/ui/pages/favorite_todos_page.dart';
 
 import '../../blocs/todo_list/todo_list_bloc.dart';
 import '../../blocs/todo_list/todo_list_event.dart';
+import 'all_todos_page.dart';
+import 'create_new_todo_page.dart';
+import 'favorite_todos_page.dart';
 
 class TodoMainPage extends StatefulWidget {
   const TodoMainPage({Key? key}) : super(key: key);

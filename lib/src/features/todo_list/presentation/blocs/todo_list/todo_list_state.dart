@@ -1,5 +1,7 @@
 import 'package:todo_app/src/features/todo_list/data/models/todo_model.dart';
 
+import '../../models/todo.dart';
+
 enum TodoState {
   initial,
   fetchingTodos,
@@ -12,8 +14,8 @@ enum TodoState {
 }
 
 class TodoListState {
-  final List<TodoModel> allTodos;
-  final List<TodoModel> favoriteTodos;
+  final List<Todo> allTodos;
+  final List<Todo> favoriteTodos;
   final TodoState state;
 
   TodoListState(
@@ -27,9 +29,7 @@ class TodoListState {
   }
 
   TodoListState copyWith(
-      {List<TodoModel>? allTodos,
-      List<TodoModel>? favoriteTodos,
-      TodoState? state}) {
+      {List<Todo>? allTodos, List<Todo>? favoriteTodos, TodoState? state}) {
     return TodoListState(
         allTodos: allTodos ?? this.allTodos,
         favoriteTodos: favoriteTodos ?? this.favoriteTodos,

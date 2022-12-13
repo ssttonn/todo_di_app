@@ -3,13 +3,14 @@ import 'package:injectable/injectable.dart';
 import 'package:todo_app/src/features/todo_list/data/models/todo_model.dart';
 import 'package:todo_app/src/features/todo_list/domain/usecases/todo_usecases.dart';
 import 'package:todo_app/src/helpers/usecase.dart';
+import '../../models/todo.dart';
 import 'todo_list_state.dart';
 import 'todo_list_event.dart';
 
 @injectable
 class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   final FetchAllTodosUsecase _fetchAllTodosUsecase;
-  final FavoriteTodoUsecase _favoriteTodoUsecase;
+  final UpdateTodoUsecase _favoriteTodoUsecase;
   final AddNewTodoUsecase _addNewTodoUsecase;
 
   TodoListBloc(
@@ -31,10 +32,10 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     on<AddNewTodo>((event, emit) async {
       try {
         emit(state.copyWith(state: TodoState.addingNewTodo));
-        TodoModel _newTodoModel = await _addNewTodoUsecase(
+        Todo _newTodo = await _addNewTodoUsecase(
             AddNewTodoUsecaseParams(title: event.newTodoTitle));
         emit(state.copyWith(
-            allTodos: state.allTodos..insert(0, _newTodoModel),
+            allTodos: state.allTodos..insert(0, _newTodo),
             state: TodoState.newTodoAdded));
       } catch (e) {
         emit(state.copyWith(state: TodoState.failure));
@@ -44,10 +45,10 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
     on<FavoriteTodo>((event, emit) async {
       try {
         emit(state.copyWith(state: TodoState.todoBeingFavorite));
-        TodoModel _todoModel = await _favoriteTodoUsecase(
-            FavoriteTodoUsecaseParams(todoId: event.todoId));
-        state.allTodos[state.allTodos
-            .indexWhere((todo) => todo.id == _todoModel.id)] = _todoModel;
+        Todo _todo = await _favoriteTodoUsecase(
+            UpdateTodoUsecaseParams(todoId: event.todoId));
+        state.allTodos[
+            state.allTodos.indexWhere((todo) => todo.id == _todo.id)] = _todo;
         emit(state.copyWith(
             allTodos: state.allTodos,
             favoriteTodos: state.allTodos

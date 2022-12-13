@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/src/features/todo_list/data/models/todo_model.dart';
+
+import '../../models/todo.dart';
 
 class TodoListWidget extends StatelessWidget {
-  final List<TodoModel> _todoList;
-  final Widget Function(TodoModel) itemBuilder;
+  final List<Todo> _todoList;
+  final Widget Function(Todo) itemBuilder;
   const TodoListWidget(this._todoList, {required this.itemBuilder});
 
   @override
@@ -12,8 +13,8 @@ class TodoListWidget extends StatelessWidget {
         itemCount: _todoList.length,
         physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
         itemBuilder: (context, index) {
-          TodoModel _todoModel = _todoList[index];
-          return itemBuilder(_todoModel);
+          Todo _todo = _todoList[index];
+          return itemBuilder(_todo);
         });
   }
 }

@@ -3,7 +3,7 @@ abstract class TodoListEvent {}
 class FetchAllTodos extends TodoListEvent {}
 
 class FavoriteTodo extends TodoListEvent {
-  final int todoId;
+  final String todoId;
   FavoriteTodo({required this.todoId});
 }
 

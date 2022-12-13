@@ -39,12 +39,12 @@ class _AllTodosPageState extends State<AllTodosPage> {
           currentState.state == TodoState.fetchTodosSuccess ||
           currentState.state == TodoState.todoFavorited;
     }, builder: (context, state) {
-      return TodoListWidget(state.allTodos, itemBuilder: ((todoModel) {
+      return TodoListWidget(state.allTodos, itemBuilder: ((todo) {
         return TodoItemWidget(
-          todoModel,
+          todo,
           onFavorite: () {
             BlocProvider.of<TodoListBloc>(context)
-                .add(FavoriteTodo(todoId: todoModel.id));
+                .add(FavoriteTodo(todoId: todo.id));
           },
         );
       }));

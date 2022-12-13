@@ -1,1 +1,3 @@
-abstract class BaseModel {}
+import 'package:equatable/equatable.dart';
+
+abstract class BaseModel extends Equatable {}

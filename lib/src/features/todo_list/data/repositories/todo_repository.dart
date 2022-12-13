@@ -1,34 +1,43 @@
 import 'package:injectable/injectable.dart';
-import 'package:todo_app/src/features/todo_list/data/entities/todo_entity.dart';
+import 'package:todo_app/src/features/todo_list/data/datasources/todo_remote_datasource.dart';
 import 'package:todo_app/src/features/todo_list/data/models/todo_model.dart';
-import 'package:todo_app/src/helpers/base_model.dart';
 
-import '../datasources/todo_local_datasource.dart';
+import '../../presentation/models/todo.dart';
 
-abstract class TodoRepository<T extends BaseModel> {
-  Future<List<T>> fetchAllTodos();
-  Future<T> addNewTodo(String title);
-  Future<T> favoriteTodo(int todoId);
+abstract class TodoRepository {
+  Future<List<Todo>> fetchAllTodos();
+  Future<Todo> addNewTodo(String title);
+  Future<Todo> updateTodo(String todoId);
+  Future<void> deleteTodo(String todoId);
 }
 
-@Injectable(as: TodoRepository<TodoModel>)
-class TodoRepositoryImpl implements TodoRepository<TodoModel> {
-  final TodoLocalDataSource<TodoEntity> _dataSource;
-  TodoRepositoryImpl(@injectable this._dataSource);
+@Injectable(as: TodoRepository)
+class TodoRepositoryImpl implements TodoRepository {
+  final BaseTodoRemoteDataSource _todoRemoteDataSource;
+  TodoRepositoryImpl(@injectable this._todoRemoteDataSource);
 
   @override
-  Future<TodoModel> addNewTodo(String title) {
-    return _dataSource.addNewTodo(title).then((entity) => entity.toModel());
+  Future<Todo> addNewTodo(String title) {
+    return _todoRemoteDataSource
+        .addNewTodo(title)
+        .then((model) => model.toTodo());
   }
 
   @override
-  Future<TodoModel> favoriteTodo(int todoId) {
-    return _dataSource.favoriteTodo(todoId).then((entity) => entity.toModel());
+  Future<Todo> updateTodo(String todoId) {
+    return _todoRemoteDataSource
+        .updateTodo(todoId)
+        .then((model) => model.toTodo());
   }
 
   @override
-  Future<List<TodoModel>> fetchAllTodos() async {
-    List<TodoEntity> allTodoEntities = await _dataSource.fetchAllTodos();
-    return allTodoEntities.map((entity) => entity.toModel()).toList();
+  Future<List<Todo>> fetchAllTodos() async {
+    List<TodoModel> allTodoModels = await _todoRemoteDataSource.fetchAllTodos();
+    return allTodoModels.map((model) => model.toTodo()).toList();
+  }
+
+  @override
+  Future<void> deleteTodo(String todoId) {
+    return _todoRemoteDataSource.deleteTodo(todoId);
   }
 }

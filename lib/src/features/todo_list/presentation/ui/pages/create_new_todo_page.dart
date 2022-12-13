@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/main.dart';
-import 'package:todo_app/src/features/todo_list/presenter/blocs/todo_list/todo_list_bloc.dart';
 import 'package:todo_app/src/shared/widgets/spacing_column.dart';
 
+import '../../blocs/todo_list/todo_list_bloc.dart';
 import '../../blocs/todo_list/todo_list_event.dart';
 import '../../blocs/todo_list/todo_list_state.dart';
 
