@@ -1,25 +1,31 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:todo_app/src/helpers/base_model.dart';
 import 'package:todo_app/src/helpers/converters.dart';
 
 import '../../presentation/models/todo.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'todo_model.freezed.dart';
 part 'todo_model.g.dart';
 
-@freezed
-class TodoModel with _$TodoModel {
-  const factory TodoModel(
-      {required String id,
-      required String title,
-      // ignore: invalid_annotation_target
-      @JsonKey(name: "favorite_at", fromJson: dateTimeFromMillis)
-          DateTime? favoriteAt,
-      // ignore: invalid_annotation_target
-      @JsonKey(name: "finish_at", fromJson: dateTimeFromMillis)
-          DateTime? finishedAt}) = _TodoModel;
+@JsonSerializable()
+class TodoModel extends BaseModel {
+  @JsonKey(toJson: null)
+  final String id;
+  final String title;
+  @JsonKey(name: "favorite_at", fromJson: dateTimeFromMillis)
+  final DateTime? favoriteAt;
+  @JsonKey(name: "finish_at", fromJson: dateTimeFromMillis)
+  final DateTime? finishAt;
+
+  TodoModel(
+      {required this.id, required this.title, this.favoriteAt, this.finishAt});
 
   factory TodoModel.fromJson(Map<String, dynamic> json) =>
       _$TodoModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TodoModelToJson(this);
+
+  @override
+  List<Object?> get props => [id];
 }
 
 extension TodoModelExtension on TodoModel {

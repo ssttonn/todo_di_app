@@ -7,11 +7,11 @@ class UpdateTodoUsecase extends UseCase<Todo, UpdateTodoUsecaseParams> {
   UpdateTodoUsecase(@injectable this._todoRepository);
   @override
   Future<Todo> call(UpdateTodoUsecaseParams params) {
-    return _todoRepository.updateTodo(params.todoId);
+    return _todoRepository.updateTodo(params.todo);
   }
 }
 
 class UpdateTodoUsecaseParams {
-  final String todoId;
-  UpdateTodoUsecaseParams({required this.todoId});
+  final Todo todo;
+  UpdateTodoUsecaseParams({required this.todo});
 }

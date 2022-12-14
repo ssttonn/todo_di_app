@@ -42,25 +42,25 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
       }
     });
 
-    on<FavoriteTodo>((event, emit) async {
-      try {
-        emit(state.copyWith(state: TodoState.todoBeingFavorite));
-        Todo _todo = await _favoriteTodoUsecase(
-            UpdateTodoUsecaseParams(todoId: event.todoId));
-        state.allTodos[
-            state.allTodos.indexWhere((todo) => todo.id == _todo.id)] = _todo;
-        emit(state.copyWith(
-            allTodos: state.allTodos,
-            favoriteTodos: state.allTodos
-                .where((todo) =>
-                    todo.favoriteAt != null &&
-                    DateTime.now().isAfter(todo.favoriteAt!))
-                .toList()
-              ..sort(((a, b) => -a.favoriteAt!.compareTo(b.favoriteAt!))),
-            state: TodoState.todoFavorited));
-      } catch (e) {
-        emit(state.copyWith(state: TodoState.failure));
-      }
-    });
+    // on<FavoriteTodo>((event, emit) async {
+    //   try {
+    //     emit(state.copyWith(state: TodoState.todoBeingFavorite));
+    //     Todo _todo = await _favoriteTodoUsecase(
+    //         UpdateTodoUsecaseParams(todo: ));
+    //     state.allTodos[
+    //         state.allTodos.indexWhere((todo) => todo.id == _todo.id)] = _todo;
+    //     emit(state.copyWith(
+    //         allTodos: state.allTodos,
+    //         favoriteTodos: state.allTodos
+    //             .where((todo) =>
+    //                 todo.favoriteAt != null &&
+    //                 DateTime.now().isAfter(todo.favoriteAt!))
+    //             .toList()
+    //           ..sort(((a, b) => -a.favoriteAt!.compareTo(b.favoriteAt!))),
+    //         state: TodoState.todoFavorited));
+    //   } catch (e) {
+    //     emit(state.copyWith(state: TodoState.failure));
+    //   }
+    // });
   }
 }

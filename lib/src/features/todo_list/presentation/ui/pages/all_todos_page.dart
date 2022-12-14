@@ -43,8 +43,8 @@ class _AllTodosPageState extends State<AllTodosPage> {
         return TodoItemWidget(
           todo,
           onFavorite: () {
-            BlocProvider.of<TodoListBloc>(context)
-                .add(FavoriteTodo(todoId: todo.id));
+            // BlocProvider.of<TodoListBloc>(context)
+            //     .add(FavoriteTodo(todoId: todo.id));
           },
         );
       }));

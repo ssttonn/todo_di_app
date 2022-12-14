@@ -7,7 +7,7 @@ import '../../presentation/models/todo.dart';
 abstract class TodoRepository {
   Future<List<Todo>> fetchAllTodos();
   Future<Todo> addNewTodo(String title);
-  Future<Todo> updateTodo(String todoId);
+  Future<Todo> updateTodo(Todo todo);
   Future<void> deleteTodo(String todoId);
 }
 
@@ -24,9 +24,9 @@ class TodoRepositoryImpl implements TodoRepository {
   }
 
   @override
-  Future<Todo> updateTodo(String todoId) {
+  Future<Todo> updateTodo(Todo todo) {
     return _todoRemoteDataSource
-        .updateTodo(todoId)
+        .updateTodo(todo.toTodoModel())
         .then((model) => model.toTodo());
   }
 

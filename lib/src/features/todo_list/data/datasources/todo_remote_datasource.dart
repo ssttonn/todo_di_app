@@ -8,7 +8,7 @@ import 'package:todo_app/src/features/todo_list/data/models/todo_model.dart';
 abstract class BaseTodoRemoteDataSource {
   Future<List<TodoModel>> fetchAllTodos();
   Future<TodoModel> addNewTodo(String title);
-  Future<TodoModel> updateTodo(String todoId);
+  Future<TodoModel> updateTodo(TodoModel todoModel);
   Future<TodoModel> getTodoDetail(String todoId);
   Future<void> deleteTodo(String todoId);
 }
@@ -30,7 +30,9 @@ class TodoRemoteDataSource implements BaseTodoRemoteDataSource {
       return TodoModel.fromJson(response.data);
     } catch (e) {
       throw ServerException(
-          message: e is DioError ? e.message : e.toString(),
+          message: e is DioError
+              ? (e.response?.data["message"] ?? e.message)
+              : e.toString(),
           statusCode: e is DioError ? (e.response?.statusCode ?? 400) : 400,
           error: e);
     }
@@ -39,10 +41,12 @@ class TodoRemoteDataSource implements BaseTodoRemoteDataSource {
   @override
   Future<void> deleteTodo(String todoId) async {
     try {
-      await dioClient.delete("/todos");
+      await dioClient.delete("/todos/$todoId");
     } catch (e) {
       throw ServerException(
-          message: e is DioError ? e.message : e.toString(),
+          message: e is DioError
+              ? (e.response?.data["message"] ?? e.message)
+              : e.toString(),
           statusCode: e is DioError ? (e.response?.statusCode ?? 400) : 400,
           error: e);
     }
@@ -57,20 +61,26 @@ class TodoRemoteDataSource implements BaseTodoRemoteDataSource {
       }).toList();
     } catch (e) {
       throw ServerException(
-          message: e is DioError ? e.message : e.toString(),
+          message: e is DioError
+              ? (e.response?.data["message"] ?? e.message)
+              : e.toString(),
           statusCode: e is DioError ? (e.response?.statusCode ?? 400) : 400,
           error: e);
     }
   }
 
   @override
-  Future<TodoModel> updateTodo(String todoId) async {
+  Future<TodoModel> updateTodo(TodoModel todoModel) async {
     try {
-      final response = await dioClient.put("/todos/$todoId");
+      final response = await dioClient.put(
+        "/todos/${todoModel.id}",
+      );
       return TodoModel.fromJson(response.data);
     } catch (e) {
       throw ServerException(
-          message: e is DioError ? e.message : e.toString(),
+          message: e is DioError
+              ? (e.response?.data["message"] ?? e.message)
+              : e.toString(),
           statusCode: e is DioError ? (e.response?.statusCode ?? 400) : 400,
           error: e);
     }
@@ -83,7 +93,9 @@ class TodoRemoteDataSource implements BaseTodoRemoteDataSource {
       return TodoModel.fromJson(response.data);
     } catch (e) {
       throw ServerException(
-          message: e is DioError ? e.message : e.toString(),
+          message: e is DioError
+              ? (e.response?.data["message"] ?? e.message)
+              : e.toString(),
           statusCode: e is DioError ? (e.response?.statusCode ?? 400) : 400,
           error: e);
     }

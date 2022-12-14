@@ -25,7 +25,7 @@ abstract class ThirdPartyModuleRegistrar {
   @lazySingleton
   Dio dioClient(@Named("BaseUrl") String url,
           @Named("Headers") Map<String, dynamic> headers) =>
-      Dio(BaseOptions(baseUrl: url, headers: headers));
+      Dio()..options = BaseOptions(baseUrl: url, headers: headers);
 
   @lazySingleton
   DioAdapter dioAdapter(@injectable Dio dio) => DioAdapter(dio: dio);

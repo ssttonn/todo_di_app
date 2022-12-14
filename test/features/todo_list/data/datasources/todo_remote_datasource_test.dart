@@ -64,7 +64,7 @@ void main() {
         "/todos",
         (server) => server.reply(
           404,
-          {"error": "Not found"},
+          {"message": "Not found!!!"},
         ),
       );
       try {
@@ -72,6 +72,7 @@ void main() {
       } catch (e) {
         expect(e, isA<ServerException>());
         expect((e as ServerException).error, isA<DioError>());
+        expect(e.message, "Not found!!!");
         expect(e.statusCode, 404);
       }
     });
@@ -114,6 +115,7 @@ void main() {
       } catch (e) {
         expect(e, isA<ServerException>());
         expect((e as ServerException).error, isA<DioError>());
+        expect((e).message, "Unauthorized");
         expect((e).statusCode, 401);
       }
     });
@@ -160,16 +162,48 @@ void main() {
         () async {
       String todoId = "2";
       dioAdapter.onGet("/todos/$todoId", (server) {
-        return server.reply(404, {"message": "Not found"});
+        return server.reply(404, {"message": "Not found!!!"});
       });
       try {
         await todoRemoteDataSource.getTodoDetail(todoId);
       } catch (e) {
         expect(e, isA<ServerException>());
         expect((e as ServerException).error, isA<DioError>());
+        expect(e.message, "Not found!!!");
         expect((e).statusCode, 404);
       }
     });
+  });
+
+  group("Delete todo", () {
+    test("Delete todo + id: 1 + no error", () {
+      String todoId = "1";
+      dioAdapter.onDelete("/todos/$todoId", (server) {
+        return server.reply(200, {"message": "Success"});
+      });
+      expect(todoRemoteDataSource.deleteTodo(todoId), completion(equals(null)));
+    });
+
+    test(
+        "Delete todo + id: 2 + status code 404 + check if it's thrown ServerException + error is DioError",
+        () async {
+      String todoId = "2";
+      dioAdapter.onDelete("/todos/$todoId", (server) {
+        return server.reply(404, {"message": "Not found!!!"});
+      });
+      try {
+        await todoRemoteDataSource.deleteTodo(todoId);
+      } catch (e) {
+        expect(e, isA<ServerException>());
+        expect((e as ServerException).error, isA<DioError>());
+        expect(e.message, "Not found!!!");
+        expect((e).statusCode, 404);
+      }
+    });
+  });
+
+  group("Update todo", () {
+    test("Update todo + id: 1 + no error", () {});
   });
 }
 

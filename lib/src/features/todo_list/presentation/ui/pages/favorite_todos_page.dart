@@ -34,8 +34,8 @@ class _FavoriteTodosPageState extends State<FavoriteTodosPage> {
         return TodoItemWidget(
           todoModel,
           onFavorite: () {
-            BlocProvider.of<TodoListBloc>(context)
-                .add(FavoriteTodo(todoId: todoModel.id));
+            // BlocProvider.of<TodoListBloc>(context)
+            //     .add(FavoriteTodo(todoId: todoModel.id));
           },
         );
       }));
